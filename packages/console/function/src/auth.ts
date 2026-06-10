@@ -36,7 +36,7 @@ export const subjects = createSubjects({
 
 const MY_THEME: Theme = {
   ...THEME_OPENAUTH,
-  logo: "https://opencode.ai/favicon-v3.svg",
+  logo: "https://raw.githubusercontent.com/CYPHES-ATP/Plasma/main/packages/ui/src/assets/brand/plasma-icon.png",
 }
 
 export default {
