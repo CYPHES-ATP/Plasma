@@ -1,0 +1,72 @@
+name: Bug report
+description: Report a reproducible problem in Plasma
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Plasma. Never include private keys, seed phrases, API keys, wallet exports, or production credentials.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Explain what happened and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open a Solidity project
+        2. Run /plasma compile
+        3. Observe the error
+    validations:
+      required: true
+
+  - type: input
+    id: plasma-version
+    attributes:
+      label: Plasma version
+      description: Run `plasma --version` or use the desktop About dialog.
+      placeholder: e.g. 1.16.2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Surface
+      options:
+        - Desktop GUI
+        - Terminal UI
+        - CLI command
+        - Web development build
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: e.g. macOS 15.5 arm64, Ubuntu 24.04 x64, Windows 11 x64
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or screenshots
+      description: Redact secrets and unrelated workspace content before attaching logs.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: security
+    attributes:
+      label: Security check
+      options:
+        - label: I confirmed this report contains no secrets or private wallet material.
+          required: true

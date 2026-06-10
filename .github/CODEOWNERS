@@ -1,0 +1,8 @@
+* @atpprotocol
+
+# Security-critical Plasma runtime and release surfaces.
+/packages/opencode/src/plasma/ @atpprotocol
+/packages/opencode/src/tool/plasma.ts @atpprotocol
+/packages/app/src/pages/plasma.tsx @atpprotocol
+/.github/workflows/ @atpprotocol
+/SECURITY.md @atpprotocol
