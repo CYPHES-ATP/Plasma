@@ -1,9 +1,5 @@
 # Plasma
 
-<p align="center">
-  <img src="packages/ui/src/assets/brand/plasma-icon.png" alt="Plasma icon" width="144" />
-</p>
-
 **AI-Powered Solidity**
 
 [![Latest Release](https://img.shields.io/github/v/release/CYPHES-ATP/Plasma?display_name=tag&sort=semver)](https://github.com/CYPHES-ATP/Plasma/releases/latest)
