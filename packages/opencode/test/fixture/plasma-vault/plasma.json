@@ -1,0 +1,20 @@
+{
+  "contracts": ["contracts/**/*.sol"],
+  "compiler": {
+    "version": "0.8.26",
+    "optimizer": true,
+    "runs": 200
+  },
+  "audit": {
+    "blockOn": ["critical", "high"]
+  },
+  "networks": {
+    "local": {
+      "rpcUrl": "http://127.0.0.1:8545",
+      "chainId": 31337
+    },
+    "sepolia": {
+      "chainId": 11155111
+    }
+  }
+}
