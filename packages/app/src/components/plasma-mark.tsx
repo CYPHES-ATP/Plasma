@@ -1,22 +1,15 @@
 import type { ComponentProps } from "solid-js"
 
-export function PlasmaMark(props: ComponentProps<"svg">) {
+export function PlasmaMark(props: ComponentProps<"img">) {
   return (
-    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true" {...props}>
-      <path
-        d="M32 4L54 12V29C54 43 44.5 53.5 32 60C19.5 53.5 10 43 10 29V12L32 4Z"
-        fill="currentColor"
-        fill-opacity="0.12"
-        stroke="currentColor"
-        stroke-width="3"
-      />
-      <path
-        d="M34 13L21 35H31L28 51L44 27H34L34 13Z"
-        fill="currentColor"
-        stroke="currentColor"
-        stroke-linejoin="round"
-      />
-    </svg>
+    <img
+      {...props}
+      src="/plasma-icon.png"
+      alt=""
+      aria-hidden="true"
+      draggable={false}
+      class={`object-contain ${props.class ?? ""}`}
+    />
   )
 }
 

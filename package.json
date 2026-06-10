@@ -13,6 +13,7 @@
     "dev:stats": "bun sst shell --stage=production -- bun run --cwd packages/stats/app dev",
     "dev:storybook": "bun --cwd packages/storybook storybook",
     "build:cli": "bun run --cwd packages/opencode script/build.ts --single --skip-install",
+    "generate:icons": "bun script/generate-plasma-icons.ts",
     "verify:plasma": "bun --cwd packages/opencode test test/plasma/plasma.test.ts && bun --cwd packages/app test:unit && bash -n install",
     "lint": "oxlint",
     "typecheck": "bun turbo typecheck",
@@ -104,6 +105,7 @@
     "oxlint-tsgolint": "0.21.0",
     "prettier": "3.6.2",
     "semver": "^7.6.0",
+    "sharp": "0.33.5",
     "sst": "catalog:",
     "turbo": "2.8.13"
   },

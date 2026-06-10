@@ -232,7 +232,7 @@ const createPlatform = (): Platform => {
 
       const notification = new Notification(title, {
         body: description ?? "",
-        icon: "https://opencode.ai/favicon-96x96-v3.png",
+        icon: new URL("./plasma-icon.png", window.location.href).href,
       })
       notification.onclick = () => {
         void window.api.showWindow()
