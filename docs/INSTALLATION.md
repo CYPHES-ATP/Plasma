@@ -29,11 +29,13 @@ Install a locally built binary:
 ./install --binary /absolute/path/to/plasma
 ```
 
-The default directory is `~/.plasma/bin`. Restart the terminal after
-installation or add it manually:
+The binary is stored at `~/.plasma/bin/plasma`. The installer adds only a
+`plasma` shell alias; it never adds `~/.plasma/bin` to `PATH` and never creates
+an `opencode` executable. Restart the terminal after installation or add the
+alias manually:
 
 ```bash
-export PATH="$HOME/.plasma/bin:$PATH"
+alias plasma="$HOME/.plasma/bin/plasma"
 ```
 
 ## Build from Source
@@ -104,6 +106,21 @@ When a signed build has been published, download it from:
 https://github.com/CYPHES-ATP/Plasma/releases
 ```
 
+The desktop application contains its own server sidecar and uses isolated
+desktop data, configuration, cache, state, database, authentication, and
+loopback port settings. Open the app directly. Do not run `plasma serve` unless
+you intentionally need a separate remote/API server.
+
+Current preview artifacts are unsigned. On macOS, if Gatekeeper quarantines a
+preview you built or downloaded for testing, remove quarantine explicitly:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Plasma.app
+```
+
+Production releases should use Apple notarization and Windows code signing
+instead of requiring this preview-only step.
+
 ## Install Foundry and Anvil
 
 Follow the official Foundry installation instructions, then verify:
@@ -137,6 +154,8 @@ export PLASMA_SERVER_PASSWORD='use-a-secret-manager-or-secure-shell-secret'
 plasma serve
 ```
 
+This server command is independent of the desktop app.
+
 Installer-managed builds can be upgraded with `plasma upgrade`. Plasma checks
 the `CYPHES-ATP/Plasma` GitHub releases and runs the Plasma installer for the
 selected version.
@@ -154,6 +173,13 @@ Check the CLI:
 ```bash
 plasma --version
 plasma --help
+```
+
+If an older installer added `~/.plasma/bin` to `PATH`, remove that export from
+your shell config and delete the obsolete compatibility executable:
+
+```bash
+rm -f "$HOME/.plasma/bin/opencode"
 ```
 
 Check Anvil:

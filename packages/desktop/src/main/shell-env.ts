@@ -35,6 +35,7 @@ function probe(shell: string, mode: "-il" | "-l"): Probe {
   const out = spawnSync(shell, [mode, "-c", "env -0"], {
     stdio: ["ignore", "pipe", "ignore"],
     timeout: TIMEOUT,
+    killSignal: "SIGKILL",
     windowsHide: true,
   })
 
@@ -72,6 +73,16 @@ export function loadShellEnv(shell: string) {
     return null
   }
 
+  const login = probe(shell, "-l")
+  if (login.type === "Loaded") {
+    logger.log(`[server] Loaded shell environment with -l (${Object.keys(login.value).length} vars)`)
+    return login.value
+  }
+  if (login.type === "Timeout") {
+    logger.log(`[server] Login shell env probe timed out: ${shell}`)
+    return null
+  }
+
   const interactive = probe(shell, "-il")
   if (interactive.type === "Loaded") {
     logger.log(`[server] Loaded shell environment with -il (${Object.keys(interactive.value).length} vars)`)
@@ -80,12 +91,6 @@ export function loadShellEnv(shell: string) {
   if (interactive.type === "Timeout") {
     logger.log(`[server] Interactive shell env probe timed out: ${shell}`)
     return null
-  }
-
-  const login = probe(shell, "-l")
-  if (login.type === "Loaded") {
-    logger.log(`[server] Loaded shell environment with -l (${Object.keys(login.value).length} vars)`)
-    return login.value
   }
 
   logger.log(`[server] Falling back to app environment: ${shell}`)

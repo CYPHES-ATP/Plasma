@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url"
 import { app, utilityProcess } from "electron"
 import type { Details } from "electron"
 import { DEFAULT_SERVER_URL_KEY, WSL_ENABLED_KEY } from "./constants"
+import { applyDesktopRuntimeEnv, DESKTOP_SERVER_USERNAME } from "./runtime-env"
 import { getUserShell, loadShellEnv } from "./shell-env"
 import { getStore } from "./store"
 
@@ -53,13 +54,7 @@ export function setWslConfig(config: WslConfig) {
 
 export function preferAppEnv(userDataPath: string) {
   const shell = process.platform === "win32" ? null : getUserShell()
-  Object.assign(process.env, {
-    ...(shell ? loadShellEnv(shell) : null),
-    OPENCODE_EXPERIMENTAL_ICON_DISCOVERY: "true",
-    OPENCODE_EXPERIMENTAL_FILEWATCHER: "true",
-    OPENCODE_CLIENT: "desktop",
-    XDG_STATE_HOME: process.env.XDG_STATE_HOME ?? userDataPath,
-  })
+  applyDesktopRuntimeEnv(process.env, shell ? (loadShellEnv(shell) ?? undefined) : undefined, userDataPath)
 }
 
 export async function spawnLocalServer(
@@ -201,7 +196,7 @@ export async function checkHealth(url: string, password?: string | null): Promis
 
   const headers = new Headers()
   if (password) {
-    const auth = Buffer.from(`opencode:${password}`).toString("base64")
+    const auth = Buffer.from(`${DESKTOP_SERVER_USERNAME}:${password}`).toString("base64")
     headers.set("authorization", `Basic ${auth}`)
   }
 
