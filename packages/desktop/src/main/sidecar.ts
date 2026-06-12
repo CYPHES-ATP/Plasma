@@ -1,5 +1,6 @@
 import * as http from "node:http"
 import * as tls from "node:tls"
+import { applyDesktopRuntimeEnv, DESKTOP_SERVER_USERNAME } from "./runtime-env"
 
 type NodeHttpWithEnvProxy = typeof http & {
   setGlobalProxyFromEnv: () => void
@@ -82,12 +83,12 @@ async function stop() {
 }
 
 function prepareSidecarEnv(password: string, userDataPath: string) {
+  applyDesktopRuntimeEnv(process.env, undefined, userDataPath)
   Object.assign(process.env, {
-    PLASMA_SERVER_USERNAME: "plasma",
+    PLASMA_SERVER_USERNAME: DESKTOP_SERVER_USERNAME,
     PLASMA_SERVER_PASSWORD: password,
-    OPENCODE_SERVER_USERNAME: "plasma",
+    OPENCODE_SERVER_USERNAME: DESKTOP_SERVER_USERNAME,
     OPENCODE_SERVER_PASSWORD: password,
-    XDG_STATE_HOME: process.env.XDG_STATE_HOME ?? userDataPath,
   })
 }
 

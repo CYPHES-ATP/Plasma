@@ -96,6 +96,10 @@ Start the desktop application:
 bun run dev:desktop
 ```
 
+The desktop app is self-contained and starts its own authenticated local
+sidecar on a free loopback port. Do not run `plasma serve` for normal desktop
+use; that command is only for an explicitly managed remote/API server.
+
 Create an unsigned local macOS preview for development:
 
 ```bash
@@ -122,8 +126,10 @@ After the first tagged release is published:
 curl -fsSL https://raw.githubusercontent.com/CYPHES-ATP/Plasma/main/install | bash
 ```
 
-The installer places `plasma` in `~/.plasma/bin` and creates an `opencode`
-compatibility alias for existing scripts.
+The installer places only `plasma` in `~/.plasma/bin` and adds a Plasma-only
+shell alias. It deliberately does not add that private directory to `PATH` and
+does not install an `opencode` alias, so other OpenCode-derived applications
+cannot accidentally launch Plasma.
 
 Upgrade an installer-managed release with:
 

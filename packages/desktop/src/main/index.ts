@@ -18,6 +18,7 @@ import { forwardInitializationFailure } from "./initialization"
 import { exportDebugLogs, initCrashReporter, initLogging, startNetLog, write as writeLog } from "./logging"
 import { parseMarkdown } from "./markdown"
 import { createMenu } from "./menu"
+import { DESKTOP_SERVER_USERNAME } from "./runtime-env"
 import {
   getDefaultServerUrl,
   getWslConfig,
@@ -257,12 +258,6 @@ const main = Effect.gen(function* () {
   )
 
   const port = yield* Effect.gen(function* () {
-    const fromEnv = process.env.OPENCODE_PORT
-    if (fromEnv) {
-      const parsed = Number.parseInt(fromEnv, 10)
-      if (!Number.isNaN(parsed)) return parsed
-    }
-
     const res = yield* Deferred.make<number, unknown>()
     const server = createServer()
     server.on("error", (e) => Deferred.failSync(res, () => e))
@@ -299,21 +294,21 @@ const main = Effect.gen(function* () {
       }),
     )
     server = listener
-    yield* Deferred.succeed(serverReady, {
-      url,
-      username: "opencode",
-      password,
-    })
 
     yield* Effect.promise(() => health.wait).pipe(
       Effect.timeout("30 seconds"),
-      Effect.catch((e) =>
+      Effect.tapError((e) =>
         Effect.sync(() => {
           logger.error("sidecar health check failed", e.toString())
         }),
       ),
     )
 
+    yield* Deferred.succeed(serverReady, {
+      url,
+      username: DESKTOP_SERVER_USERNAME,
+      password,
+    })
     logger.log("loading task finished")
   }).pipe(forwardInitializationFailure(serverReady), Effect.forkChild)
 
