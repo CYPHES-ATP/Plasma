@@ -18,7 +18,7 @@ Options:
     -h, --help              Display this help message
     -v, --version <version> Install a specific version (e.g., 1.0.180)
     -b, --binary <path>     Install from a local binary instead of downloading
-        --no-modify-path    Don't modify shell config files (.zshrc, .bashrc, etc.)
+        --no-modify-path    Don't add the plasma command to shell config files
 
 Examples:
     curl -fsSL https://raw.githubusercontent.com/CYPHES-ATP/Plasma/main/install | bash
@@ -220,11 +220,9 @@ print_message() {
 }
 
 check_version() {
-    if command -v plasma >/dev/null 2>&1; then
-        plasma_path=$(which plasma)
-
+    if [ -x "${INSTALL_DIR}/plasma" ]; then
         ## Check the installed version
-        installed_version=$(plasma --version 2>/dev/null || echo "")
+        installed_version=$("${INSTALL_DIR}/plasma" --version 2>/dev/null || echo "")
 
         if [[ "$installed_version" != "$specific_version" ]]; then
             print_message info "${MUTED}Installed version: ${NC}$installed_version."
@@ -347,7 +345,7 @@ download_and_install() {
     fi
     mv "$extracted" "$INSTALL_DIR/plasma"
     chmod 755 "${INSTALL_DIR}/plasma"
-    cp "${INSTALL_DIR}/plasma" "${INSTALL_DIR}/opencode"
+    rm -f "${INSTALL_DIR}/opencode"
     rm -rf "$tmp_dir"
 }
 
@@ -355,7 +353,7 @@ install_from_binary() {
     print_message info "\n${MUTED}Installing ${NC}Plasma ${MUTED}from: ${NC}$binary_path"
     cp "$binary_path" "${INSTALL_DIR}/plasma"
     chmod 755 "${INSTALL_DIR}/plasma"
-    cp "${INSTALL_DIR}/plasma" "${INSTALL_DIR}/opencode"
+    rm -f "${INSTALL_DIR}/opencode"
 }
 
 if [ -n "$binary_path" ]; then
@@ -366,7 +364,7 @@ else
 fi
 
 
-add_to_path() {
+add_shell_command() {
     local config_file=$1
     local command=$2
 
@@ -375,9 +373,9 @@ add_to_path() {
     elif [[ -w $config_file ]]; then
         echo -e "\n# plasma" >> "$config_file"
         echo "$command" >> "$config_file"
-        print_message info "${MUTED}Successfully added ${NC}Plasma ${MUTED}to \$PATH in ${NC}$config_file"
+        print_message info "${MUTED}Successfully added the ${NC}plasma ${MUTED}command to ${NC}$config_file"
     else
-        print_message warning "Manually add the directory to $config_file (or similar):"
+        print_message warning "Manually add the command to $config_file (or similar):"
         print_message info "  $command"
     fi
 }
@@ -417,29 +415,15 @@ if [[ "$no_modify_path" != "true" ]]; then
     done
 
     if [[ -z $config_file ]]; then
-        print_message warning "No config file found for $current_shell. You may need to manually add to PATH:"
-        print_message info "  export PATH=$INSTALL_DIR:\$PATH"
-    elif [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
+        print_message warning "No config file found for $current_shell. Add a Plasma-only alias manually:"
+        print_message info "  alias plasma=\"$INSTALL_DIR/plasma\""
+    else
         case $current_shell in
             fish)
-                add_to_path "$config_file" "fish_add_path $INSTALL_DIR"
-            ;;
-            zsh)
-                add_to_path "$config_file" "export PATH=$INSTALL_DIR:\$PATH"
-            ;;
-            bash)
-                add_to_path "$config_file" "export PATH=$INSTALL_DIR:\$PATH"
-            ;;
-            ash)
-                add_to_path "$config_file" "export PATH=$INSTALL_DIR:\$PATH"
-            ;;
-            sh)
-                add_to_path "$config_file" "export PATH=$INSTALL_DIR:\$PATH"
+                add_shell_command "$config_file" "alias plasma \"$INSTALL_DIR/plasma\""
             ;;
             *)
-                export PATH=$INSTALL_DIR:$PATH
-                print_message warning "Manually add the directory to $config_file (or similar):"
-                print_message info "  export PATH=$INSTALL_DIR:\$PATH"
+                add_shell_command "$config_file" "alias plasma=\"$INSTALL_DIR/plasma\""
             ;;
         esac
     fi
@@ -447,7 +431,7 @@ fi
 
 if [ -n "${GITHUB_ACTIONS-}" ] && [ "${GITHUB_ACTIONS}" == "true" ]; then
     echo "$INSTALL_DIR" >> $GITHUB_PATH
-    print_message info "Added $INSTALL_DIR to \$GITHUB_PATH"
+    print_message info "Added the Plasma-only install directory to \$GITHUB_PATH"
 fi
 
 echo -e ""
@@ -458,6 +442,7 @@ echo -e ""
 echo -e ""
 echo -e "${MUTED}Plasma is ready. To start:${NC}"
 echo -e ""
+echo -e "source your shell config or open a new terminal"
 echo -e "cd <project>  ${MUTED}# Open directory${NC}"
 echo -e "plasma        ${MUTED}# Run command${NC}"
 echo -e ""

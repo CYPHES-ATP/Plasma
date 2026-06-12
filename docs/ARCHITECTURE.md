@@ -53,11 +53,17 @@ The following upstream identifiers are retained intentionally:
 - legacy `OPENCODE_*` runtime environment variable fallbacks
 - `opencode.json` and `.opencode` extension/config paths
 - upstream provider IDs
-- `opencode` executable alias
 
 Changing these would break runtime APIs, persisted settings, plugins, or
 upstream mergeability. New user-facing product surfaces use Plasma, including
 the primary `PLASMA_SERVER_USERNAME` and `PLASMA_SERVER_PASSWORD` variables.
+
+The packaged desktop process is an intentional isolation boundary: it assigns
+desktop-owned XDG data/config/cache/state roots, ignores inherited CLI
+port/database/auth overrides, selects a free loopback port, and authenticates
+its renderer and bundled sidecar with the same Plasma credentials. The CLI
+installer exposes only the `plasma` command and never places a compatibility
+`opencode` executable on `PATH`.
 
 ## Wallet Boundary
 
